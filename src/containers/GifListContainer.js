@@ -3,36 +3,25 @@ import GifList from '../components/GifList'
 import GifSearch from '../components/GifSearch'
 
 export default class GifListContainer extends React.Component {
-    constructor(){
-        super()
-        this.state = {}
-    }
+    state = {};
 
-
-    handleSubmit = (event) => {
-        event.preventDefault();
-        fetch(`https://api.giphy.com/v1/gifs/search?q=${event.target.value}&api_key=pq8XjNxMpYQahvK7AxTqbCmOr3HXpeS5&rating=g`)
-        .then(response=>response.json())
-        .then(json=>{
-            let gifs = json.data.slice(0,3);
-            console.log(gifs);
-            this.setState({gifs});
-        })
-        .catch(console.error);
-        console.log(this.state);
-        
-    }
+    handleSubmit = async (event, state) => {
+        event.preventDefault()
+        const response = await fetch(`https://api.giphy.com/v1/gifs/search?q=${state}&api_key=pq8XjNxMpYQahvK7AxTqbCmOr3HXpeS5&rating=g`);
+        const json = await response.json();
+        const gifTemp = await json.data.slice(0,3);
+        this.setState({gifTemp});
+    };
+       
 
 
     render (){
-        let gifs = this.state;
         return(
             <React.Fragment>
                 <GifSearch handleSubmit={this.handleSubmit}/>
-                { this.state.data===true ?(
-                    gifs.map(gif=>(
-                    <GifList url={gif.images.original.url}/>
-                ))):null}
+                {this.state.gifTemp !== null ?
+                <GifList gifs={this.state.gifTemp}/>
+                :null}
             </React.Fragment>
         )
     }
